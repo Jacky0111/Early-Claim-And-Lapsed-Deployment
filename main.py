@@ -1,3 +1,4 @@
+import pickle
 import joblib
 import numpy as np
 import pandas as pd
@@ -84,7 +85,7 @@ st.subheader('User Input features')
 st.write(df)
 
 # Reads in saved classification model
-load_clf = joblib.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
+load_clf = pickle.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
 
 # read data from a file
 # with open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb') as f:
