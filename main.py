@@ -38,7 +38,7 @@ def userInputFeatures():
 
     payment_term = st.sidebar.slider('Payment Term', 0, 100)
 
-    extra_load = st.sidebar.number_input('Extra Load')
+    extra_load = st.sidebar.selectbox('Extra Load', ('Yes', 'No'))
 
     service_agent_edu_level = st.sidebar.selectbox('Service Agent Educational Level', ('H', 'P', 'S', 'T', 'U'))
 
@@ -85,7 +85,7 @@ st.subheader('User Input features')
 st.write(df)
 
 # Reads in saved classification model
-load_clf = pickle.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
+load_clf = joblib.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
 
 # read data from a file
 # with open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb') as f:
@@ -93,15 +93,15 @@ load_clf = pickle.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb
 #     print(pickle.load(f))
 
 print(df.info())
-st.write(df.columns)
+# st.write(df.columns)
 # Apply model to make predictions
 prediction = load_clf.predict(df)
-# prediction_proba = load_clf.predict_proba(df)
+prediction_proba = load_clf.predict_proba(df)
 
 # Prediction
-# st.subheader('Prediction')
-# penguins_species = np.array(['Early Claim and Lapsed', 'Not arly Claim and Lapsed'])
-# st.write(penguins_species[prediction])
-#
-# st.subheader('Prediction Probability')
-# st.write(prediction_proba)
+st.subheader('Prediction')
+ecal = np.array(['Not Early Claim and Lapsed', 'Early Claim and Lapsed'])
+st.write(ecal[prediction])
+
+st.subheader('Prediction Probability')
+st.write(prediction_proba)
