@@ -1,3 +1,5 @@
+import os
+import math
 import pickle
 import joblib
 import numpy as np
@@ -5,12 +7,9 @@ import pandas as pd
 import streamlit as st
 
 from PIL import Image
+from pathlib import Path
 from streamlit_lottie import st_lottie
 from sklearn.ensemble import RandomForestClassifier
-
-st.write('# Early Claim and Lapsed Prediction')
-
-st.sidebar.header('User Input Features')
 
 
 # Collects user input features into dataframe
@@ -34,7 +33,7 @@ def userInputFeatures():
 
     risk_sum_assured = st.sidebar.selectbox('Risk Sum Assured', ('100', '150', '200', '300', '400', '600'))
 
-    payment_mode = st.sidebar.selectbox('Payment Mode', ('1', '2', '4', '12'))
+    payment_mode = st.sidebar.selectbox('Payment Mode', ('Monthly', 'Yearly', 'Half-yearly', 'Quarterly'))
 
     payment_term = st.sidebar.slider('Payment Term', 0, 100)
 
@@ -68,17 +67,131 @@ def userInputFeatures():
             }
 
     features = pd.DataFrame(data, index=[0])
-
-    # Transform categorical features into the appropriate type that is expected by LightGBM
-    for col in features.columns:
-        col_type = features[col].dtype
-        if col_type.name == 'object' or col_type.name == 'category':
-            features[col] = features[col].astype('category')
-
     return features
 
 
-df = userInputFeatures()
+# Transform categorical features into the appropriate type that is expected by LightGBM
+def objToCat(f):
+    for col in f.columns:
+        col_type = f[col].dtype
+        if col_type.name == 'object' or col_type.name == 'category' or col_type.name == 'bool':
+            f[col] = f[col].astype('category')
+    return f
+
+
+def missingValues(data):
+    for col in range(data.shape[1]):
+        if data.iloc[:, col].dtype == 'object':
+            for index, val in enumerate(data.iloc[:, col].values):
+                data.iloc[:, col].values[index] = str(val).strip()
+                if str(val).isspace() or val is None or str(val).lower() == 'nan' or str(val).lower() == 'none':
+                    data.iloc[:, col].values[index] = np.NaN
+    return data
+
+
+def extraLoad(data):
+    return data.apply(lambda x: False if isinstance(x, float) else (False if x == 0 else True))
+
+
+def paymentMode(data):
+    # 1: Annual, 2: Half-Yearly, 4: Quarterly, 12: Monthly
+    data = data.replace({12.: 'Monthly',
+                         1.: 'Yearly',
+                         2.: 'Half-yearly',
+                         4.: 'Quarterly'}).astype(str)
+
+    return data
+
+
+def riskSumAssured(data):
+    return data.astype(int).astype(str)
+
+
+def mapPostcode(data):
+    i = 0
+    while i < data.count():
+        if data[i] in range(50000, 60001):
+            data[i] = 'KUALA LUMPUR'
+        elif data[i] == '          ':
+            data[i] = ' '
+        elif str(data[i]).startswith('62'):
+            data[i] = 'PUTRAJAYA'
+        elif str(data[i]).startswith('87'):
+            data[i] = 'LABUAN'
+        elif data[i] in range(1000, 2801):
+            data[i] = 'PERLIS'
+        elif data[i] in range(5000, 9811) or data[i] == 14290 or data[i] == 14390 or data[i] == 34950:
+            data[i] = 'KEDAH'
+        elif data[i] in range(10000, 14401):
+            data[i] = 'PENANG'
+        elif data[i] in range(15000, 18501):
+            data[i] = 'KELANTAN'
+        elif data[i] in range(20000, 24301):
+            data[i] = 'TERENGGANU'
+        elif data[i] in range(25000, 28801) or str(data[i]).startswith('39') or str(data[i]).startswith('49') or data[
+            i] == 69000:
+            data[i] = 'PAHANG'
+        elif data[i] in range(30000, 36811):
+            data[i] = 'PERAK'
+        elif data[i] in range(40000, 48301) or data[i] in range(63000, 63301) or data[i] == 64000 or data[i] in range(
+                68000, 68101):
+            data[i] = 'SELANGOR'
+        elif data[i] in range(70000, 73501):
+            data[i] = 'NEGERI SEMBILAN'
+        elif data[i] in range(75000, 78301):
+            data[i] = 'MELAKA'
+        elif data[i] in range(79000, 86901):
+            data[i] = 'JOHOR'
+        elif data[i] in range(88000, 91301):
+            data[i] = 'SABAH'
+        elif data[i] in range(93000, 98851):
+            data[i] = 'SARAWAK'
+        i += 1
+
+
+col_list = ['RISK_CODE', 'SEX', 'OCCUPATION_CLASS', 'RACE', 'MARITAL_STATUS', 'ENTRY_AGE', 'SMOKER', 'PAYMENT_MODE',
+            'RSK_SUM_ASSURE', 'PAYMNT_TERM', 'EXTRA_LOAD', 'SERVICE_AGENT_EDU_LEVEL', 'PAYMENT_METHOD',
+            'SELL_AGENT_EDU_LEVEL', 'SELL_AGENT_AGE', 'SELL_AGENT_POSTCODE', 'STATE', 'BMI']
+
+st.write('# Early Claim and Lapsed Prediction')
+
+st.sidebar.header('User Input Features')
+
+target = pd.DataFrame()
+# Import file or user manually inputs
+uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=['csv', 'xlsx'])
+
+if uploaded_file is not None:
+    if Path(uploaded_file.name).suffix == '.xlsx':
+        df = pd.read_excel(uploaded_file)
+    #     uploaded_file.name = Path(uploaded_file.name).stem + '.csv'
+    #     os.rename(uploaded_file.name, os.path.splitext(uploaded_file.name)[0] + '.xlsx')
+    else:
+        df = pd.read_csv(uploaded_file)
+
+    # Store target column into new Dataframe
+    target = df[['EarlyClaimAndLapsed']]
+
+    # Column columns
+    df.drop([col for col in df.columns if col not in col_list], axis=1, inplace=True)
+
+    # Clean Missing Values
+    df = missingValues(df)
+
+    # Data Manipulation
+    df['EXTRA_LOAD'] = extraLoad(df['EXTRA_LOAD'])
+    df['PAYMENT_MODE'] = paymentMode(df['PAYMENT_MODE'])
+    df['RSK_SUM_ASSURE'] = riskSumAssured(df['RSK_SUM_ASSURE'])
+
+    df.reset_index(inplace=True, drop=True)
+    df['SELL_AGENT_POSTCODE'] = df['SELL_AGENT_POSTCODE'].astype(float)
+    mapPostcode(df['SELL_AGENT_POSTCODE'])
+    df.rename(columns={'SELL_AGENT_POSTCODE': 'SELL_AGENT_STATE'}, inplace=True)
+
+else:
+    df = userInputFeatures()
+
+df = objToCat(df)
 
 # Displays the user input features
 st.subheader('User Input features')
@@ -87,21 +200,25 @@ st.write(df)
 # Reads in saved classification model
 load_clf = joblib.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
 
-# read data from a file
-# with open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb') as f:
-#     # load_clf =
-#     print(pickle.load(f))
-
 print(df.info())
-# st.write(df.columns)
+# # st.write(df.columns)
 # Apply model to make predictions
 prediction = load_clf.predict(df)
 prediction_proba = load_clf.predict_proba(df)
 
 # Prediction
 st.subheader('Prediction')
-ecal = np.array(['Not Early Claim and Lapsed', 'Early Claim and Lapsed'])
-st.write(ecal[prediction])
+# ecal = np.array(['Not Early Claim and Lapsed', 'Early Claim and Lapsed'])
+ecal = np.array(['N', 'Y'])
+ecal_df = pd.DataFrame(ecal[prediction], columns=['Prediction'])
+df2 = pd.concat([target, ecal_df], axis=1)
+df2['Result'] = df2.apply(lambda x: True if x['EarlyClaimAndLapsed'] == x['Prediction'] else False, axis=1)
+st.write(df2)
+
+accuracy = df2.loc[df2['Result'] == True].shape[0] / df2.shape[0]
+st.write('####  ' + str(df2.loc[df2['Result'] == True].shape[0]) + ' out of ' + str(df2.shape[0]) + ' are predicted correct, ' +
+         'where the accuracy is ' + str(round(accuracy, 2) * 100) + '%.')
+
 
 st.subheader('Prediction Probability')
 st.write(prediction_proba)
