@@ -50,11 +50,11 @@ class DataManipulation:
         i = 0
         drop_list = []
 
-        while i < data.count():
+        while i < data.shape[0]:
             if data[i] in range(50000, 60001):
                 data[i] = 'KUALA LUMPUR'
-            elif data[i] == '          ':
-                data[i] = ' '
+            # elif data[i] == '          ':
+            #     data[i] = ' '
             elif str(data[i]).startswith('62'):
                 data[i] = 'PUTRAJAYA'
             elif str(data[i]).startswith('87'):
@@ -69,11 +69,13 @@ class DataManipulation:
                 data[i] = 'KELANTAN'
             elif data[i] in range(20000, 24301):
                 data[i] = 'TERENGGANU'
-            elif data[i] in range(25000, 28801) or str(data[i]).startswith('39') or str(data[i]).startswith('49') or data[i] == 69000:
+            elif data[i] in range(25000, 28801) or str(data[i]).startswith('39') or str(data[i]).startswith('49') or \
+                    data[i] == 69000:
                 data[i] = 'PAHANG'
             elif data[i] in range(30000, 36811):
                 data[i] = 'PERAK'
-            elif data[i] in range(40000, 48301) or data[i] in range(63000, 63301) or data[i] == 64000 or data[i] in range(
+            elif data[i] in range(40000, 48301) or data[i] in range(63000, 63301) or data[i] == 64000 or data[
+                i] in range(
                     68000, 68101):
                 data[i] = 'SELANGOR'
             elif data[i] in range(70000, 73501):
@@ -87,7 +89,10 @@ class DataManipulation:
             elif data[i] in range(93000, 98851):
                 data[i] = 'SARAWAK'
             else:
+                # st.write(data[i], i)
                 drop_list.append(data.index[i])
-            i += 1
 
+            # st.write(data[i], i)
+            i += 1
+        # st.write(drop_list)
         return data, drop_list
