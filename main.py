@@ -101,8 +101,12 @@ def main():
         df['RSK_SUM_ASSURE'] = DataManipulation.riskSumAssured(df['RSK_SUM_ASSURE'])
 
         df.reset_index(inplace=True, drop=True)
-        df['SELL_AGENT_POSTCODE'] = DataManipulation.agentPostcode(df['SELL_AGENT_POSTCODE'])
+        # st.write(df['SELL_AGENT_POSTCODE'].head(20))
+        df['SELL_AGENT_POSTCODE'], drop_list = DataManipulation.agentPostcode(df['SELL_AGENT_POSTCODE'])
+        df.drop(df['SELL_AGENT_POSTCODE'].index[drop_list], axis=0, inplace=True)
+        # print(df['SELL_AGENT_POSTCODE'].dtypes)
         df.rename(columns={'SELL_AGENT_POSTCODE': 'SELL_AGENT_STATE'}, inplace=True)
+        # st.write(df['SELL_AGENT_STATE'])
 
     else:
         df = userInputFeatures()
@@ -112,11 +116,9 @@ def main():
     # Displays the user input features
     st.subheader('User Input features')
     st.write(df)
-
-    # Reads in saved classification model
+    # # Reads in saved classification model
     load_clf = joblib.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
-
-    # print(df.info())
+    print(df.info())
     # Apply model to make predictions
     prediction = load_clf.predict(df)
     prediction_proba = load_clf.predict_proba(df)
