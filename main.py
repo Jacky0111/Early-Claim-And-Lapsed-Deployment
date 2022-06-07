@@ -88,6 +88,7 @@ def main():
 
         # Store target column into new Dataframe
         # target = df[['EarlyClaimAndLapsed']]
+        pol_df = df[['POLICY_NO']].astype('category')
 
         # Column columns
         df.drop([col for col in df.columns if col not in col_list], axis=1, inplace=True)
@@ -100,10 +101,21 @@ def main():
         df['PAYMENT_MODE'] = DataManipulation.paymentMode(df['PAYMENT_MODE'])
         df['RSK_SUM_ASSURE'] = DataManipulation.riskSumAssured(df['RSK_SUM_ASSURE'])
 
-        df.reset_index(inplace=True, drop=True)
         df['SELL_AGENT_POSTCODE'], drop_list = DataManipulation.agentPostcode(df['SELL_AGENT_POSTCODE'])
         df.drop(df['SELL_AGENT_POSTCODE'].index[drop_list], axis=0, inplace=True)
+        pol_df.drop(pol_df['POLICY_NO'].index[drop_list], axis=0, inplace=True)
+
+        df.reset_index(inplace=True, drop=True)
+        pol_df.reset_index(inplace=True, drop=True)
+
+        # for ele in df['SELL_AGENT_POSTCODE']:
+        #     st.write(ele)
+        # st.write(df['SELL_AGENT_POSTCODE'])
+
+        # print(df['SELL_AGENT_POSTCODE'].dtypes)
         df.rename(columns={'SELL_AGENT_POSTCODE': 'SELL_AGENT_STATE'}, inplace=True)
+        # st.write(df.columns)
+        # st.write(df['SELL_AGENT_STATE'])
 
     else:
         df = userInputFeatures()
@@ -125,14 +137,14 @@ def main():
     # ecal = np.array(['Not Early Claim and Lapsed', 'Early Claim and Lapsed'])
     ecal = np.array(['N', 'Y'])
     ecal_df = pd.DataFrame(ecal[prediction], columns=['Prediction'])
-    df2 = pd.concat([target, ecal_df], axis=1)
-    df2['Result'] = df2.apply(lambda x: True if x['EarlyClaimAndLapsed'] == x['Prediction'] else False, axis=1)
+    df2 = pd.concat([pol_df, ecal_df], axis=1)
+    # df2['Result'] = df2.apply(lambda x: True if x['EarlyClaimAndLapsed'] == x['Prediction'] else False, axis=1)
     st.write(df2)
 
-    accuracy = df2.loc[df2['Result'] == True].shape[0] / df2.shape[0]
-    st.write('####  ' + str(df2.loc[df2['Result'] == True].shape[0]) + ' out of ' + str(
-        df2.shape[0]) + ' are predicted correct, ' +
-             'where the accuracy is ' + str(round(accuracy, 2) * 100) + '%.')
+    # accuracy = df2.loc[df2['Result'] == True].shape[0] / df2.shape[0]
+    # st.write('####  ' + str(df2.loc[df2['Result'] == True].shape[0]) + ' out of ' + str(
+    #     df2.shape[0]) + ' are predicted correct, ' +
+    #          'where the accuracy is ' + str(round(accuracy, 2) * 100) + '%.')
 
     st.subheader('Prediction Probability')
     st.write(prediction_proba)
