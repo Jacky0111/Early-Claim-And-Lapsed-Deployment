@@ -1,4 +1,6 @@
 import numpy as np
+import streamlit as st
+
 
 class DataManipulation:
     # Transform categorical features into the appropriate type that is expected by LightGBM
@@ -46,6 +48,8 @@ class DataManipulation:
     @staticmethod
     def mapPostcode(data):
         i = 0
+        drop_list = []
+
         while i < data.count():
             if data[i] in range(50000, 60001):
                 data[i] = 'KUALA LUMPUR'
@@ -65,8 +69,7 @@ class DataManipulation:
                 data[i] = 'KELANTAN'
             elif data[i] in range(20000, 24301):
                 data[i] = 'TERENGGANU'
-            elif data[i] in range(25000, 28801) or str(data[i]).startswith('39') or str(data[i]).startswith('49') or data[
-                i] == 69000:
+            elif data[i] in range(25000, 28801) or str(data[i]).startswith('39') or str(data[i]).startswith('49') or data[i] == 69000:
                 data[i] = 'PAHANG'
             elif data[i] in range(30000, 36811):
                 data[i] = 'PERAK'
@@ -83,5 +86,8 @@ class DataManipulation:
                 data[i] = 'SABAH'
             elif data[i] in range(93000, 98851):
                 data[i] = 'SARAWAK'
+            else:
+                drop_list.append(data.index[i])
             i += 1
-        return data
+
+        return data, drop_list
