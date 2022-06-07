@@ -87,7 +87,7 @@ def main():
             df = pd.read_csv(uploaded_file)
 
         # Store target column into new Dataframe
-        target = df[['EarlyClaimAndLapsed']]
+        # target = df[['EarlyClaimAndLapsed']]
 
         # Column columns
         df.drop([col for col in df.columns if col not in col_list], axis=1, inplace=True)
@@ -101,12 +101,9 @@ def main():
         df['RSK_SUM_ASSURE'] = DataManipulation.riskSumAssured(df['RSK_SUM_ASSURE'])
 
         df.reset_index(inplace=True, drop=True)
-        # st.write(df['SELL_AGENT_POSTCODE'].head(20))
         df['SELL_AGENT_POSTCODE'], drop_list = DataManipulation.agentPostcode(df['SELL_AGENT_POSTCODE'])
         df.drop(df['SELL_AGENT_POSTCODE'].index[drop_list], axis=0, inplace=True)
-        # print(df['SELL_AGENT_POSTCODE'].dtypes)
         df.rename(columns={'SELL_AGENT_POSTCODE': 'SELL_AGENT_STATE'}, inplace=True)
-        # st.write(df['SELL_AGENT_STATE'])
 
     else:
         df = userInputFeatures()
