@@ -86,6 +86,9 @@ def main():
         else:
             df = pd.read_csv(uploaded_file)
 
+        df.drop_duplicates(inplace=True)
+        df.reset_index(inplace=True, drop=True)
+
         # Store target column into new Dataframe
         # target = df[['EarlyClaimAndLapsed']]
         pol_df = df[['POLICY_NO']].astype('category')
