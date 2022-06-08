@@ -134,10 +134,16 @@ def main():
 
     # Prediction
     st.subheader('Prediction')
-    # ecal = np.array(['Not Early Claim and Lapsed', 'Early Claim and Lapsed'])
-    ecal = np.array(['N', 'Y'])
+    ecal = np.array(['Not Early Claim and Lapsed', 'Early Claim and Lapsed'])
+    # ecal = np.array(['N', 'Y'])
     ecal_df = pd.DataFrame(ecal[prediction], columns=['Prediction'])
-    df2 = pd.concat([pol_df, ecal_df], axis=1)
+    # print(ecal_df)
+    proba_df = pd.DataFrame({'Predicted No': prediction_proba[:, 0], 'Predicted Yes': prediction_proba[:, 1]})
+
+    try:
+        df2 = pd.concat([pol_df, ecal_df, proba_df], axis=1)
+    except UnboundLocalError:
+        df2 = ecal_df
     # df2['Result'] = df2.apply(lambda x: True if x['EarlyClaimAndLapsed'] == x['Prediction'] else False, axis=1)
     st.write(df2)
 
@@ -146,8 +152,9 @@ def main():
     #     df2.shape[0]) + ' are predicted correct, ' +
     #          'where the accuracy is ' + str(round(accuracy, 2) * 100) + '%.')
 
-    st.subheader('Prediction Probability')
-    st.write(prediction_proba)
+    # print(proba_df)
+    # st.subheader('Prediction Probability')
+    # st.write(prediction_proba)
 
 
 if __name__ == '__main__':
