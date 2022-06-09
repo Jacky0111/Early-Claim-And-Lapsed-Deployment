@@ -8,7 +8,7 @@ from DataManipulation import DataManipulation
 
 col_list = ['RISK_CODE', 'SEX', 'OCCUPATION_CLASS', 'RACE', 'MARITAL_STATUS', 'ENTRY_AGE', 'SMOKER', 'PAYMENT_MODE',
             'RSK_SUM_ASSURE', 'PAYMNT_TERM', 'EXTRA_LOAD', 'SERVICE_AGENT_EDU_LEVEL', 'PAYMENT_METHOD',
-            'SELL_AGENT_EDU_LEVEL', 'SELL_AGENT_AGE', 'SELL_AGENT_POSTCODE', 'STATE', 'BMI']
+            'SELL_AGENT_EDU_LEVEL', 'SELL_AGENT_AGE', 'SELL_AGENT_POSTCODE', 'STATE', 'BMI', 'POLICY_NO']
 
 
 # Collects user input features into dataframe
@@ -86,15 +86,15 @@ def main():
         else:
             df = pd.read_csv(uploaded_file)
 
+        # Drop useless columns
+        df.drop([col for col in df.columns if col not in col_list], axis=1, inplace=True)
+
+        # Drop duplicates
         df.drop_duplicates(inplace=True)
         df.reset_index(inplace=True, drop=True)
 
-        # Store target column into new Dataframe
-        # target = df[['EarlyClaimAndLapsed']]
         pol_df = df[['POLICY_NO']].astype('category')
-
-        # Column columns
-        df.drop([col for col in df.columns if col not in col_list], axis=1, inplace=True)
+        df.drop('POLICY_NO', inplace=True, axis=1)
 
         # Clean Missing Values
         df = DataManipulation.missingValues(df)
