@@ -68,14 +68,15 @@ def userInputFeatures():
 
     return pd.DataFrame(data, index=[0])
 
+
 def to_excel(df):
     output = BytesIO()
     writer = pd.ExcelWriter(output, engine='xlsxwriter')
     df.to_excel(writer, index=False, sheet_name='Sheet1')
     workbook = writer.book
     worksheet = writer.sheets['Sheet1']
-    format1 = workbook.add_format({'num_format': '0.00'}) 
-    worksheet.set_column('A:A', None, format1)  
+    format1 = workbook.add_format({'num_format': '0.00'})
+    worksheet.set_column('A:A', None, format1)
     writer.save()
     processed_data = output.getvalue()
     return processed_data
@@ -94,8 +95,6 @@ def main():
     if uploaded_file is not None:
         if Path(uploaded_file.name).suffix == '.xlsx':
             df = pd.read_excel(uploaded_file)
-        #     uploaded_file.name = Path(uploaded_file.name).stem + '.csv'
-        #     os.rename(uploaded_file.name, os.path.splitext(uploaded_file.name)[0] + '.xlsx')
         else:
             df = pd.read_csv(uploaded_file)
 
@@ -143,7 +142,7 @@ def main():
     st.write(df)
     # # Reads in saved classification model
     load_clf = joblib.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
-    print(df.info())
+    # print(df.info())
     # Apply model to make predictions
     prediction = load_clf.predict(df)
     prediction_proba = load_clf.predict_proba(df)
@@ -160,23 +159,27 @@ def main():
     try:
         df2 = pd.concat([pol_df, ecal_df, proba_df], axis=1)
     except UnboundLocalError:
-        df2 = ecal_df
+        df2 = pd.concat([ecal_df, proba_df], axis=1)
     # df2['Result'] = df2.apply(lambda x: True if x['EarlyClaimAndLapsed'] == x['Prediction'] else False, axis=1)
     st.write(df2)
 
-    # accuracy = df2.loc[df2['Result'] == True].shape[0] / df2.shape[0]
-    # st.write('####  ' + str(df2.loc[df2['Result'] == True].shape[0]) + ' out of ' + str(
-    #     df2.shape[0]) + ' are predicted correct, ' +
-    #          'where the accuracy is ' + str(round(accuracy, 2) * 100) + '%.')
+    try:
+        df2['POLICY_NO'] = df2['POLICY_NO'].astype(str)
+        df2['Predicted No'] = df2['Predicted No'].round(decimals=4)
+        df2['Predicted Yes'] = df2['Predicted Yes'].round(decimals=4)
 
-    # print(proba_df)
-    # st.subheader('Prediction Probability')
-    # st.write(prediction_proba)
-    
-    df2_xlsx = to_excel(df2)
-    st.download_button(label='Export Current Result',
-                                    data=df2_xlsx ,
-                                    file_name= 'Output.xlsx')
+        df2_xlsx = to_excel(df2)
+        st.download_button(label='Export Current Result',
+                           data=df2_xlsx,
+                           file_name=f'{Path(uploaded_file.name).stem}_result.xlsx')
+    except KeyError:
+        df2['Predicted No'] = df2['Predicted No'].round(decimals=4)
+        df2['Predicted Yes'] = df2['Predicted Yes'].round(decimals=4)
+        df2_xlsx = to_excel(df2)
+        st.download_button(label='Export Current Result',
+                           data=df2_xlsx,
+                           file_name=f'result.xlsx')
+
 
 if __name__ == '__main__':
     main()
