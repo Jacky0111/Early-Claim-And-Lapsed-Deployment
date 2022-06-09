@@ -2,7 +2,8 @@ import joblib
 import numpy as np
 import pandas as pd
 import streamlit as st
-
+from io import BytesIO
+from pyxlsb import open_workbook as open_xlsb
 from pathlib import Path
 from DataManipulation import DataManipulation
 
@@ -66,6 +67,18 @@ def userInputFeatures():
             }
 
     return pd.DataFrame(data, index=[0])
+
+def to_excel(df):
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer, index=False, sheet_name='Sheet1')
+    workbook = writer.book
+    worksheet = writer.sheets['Sheet1']
+    format1 = workbook.add_format({'num_format': '0.00'}) 
+    worksheet.set_column('A:A', None, format1)  
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
 
 
 def main():
@@ -141,6 +154,7 @@ def main():
     # ecal = np.array(['N', 'Y'])
     ecal_df = pd.DataFrame(ecal[prediction], columns=['Prediction'])
     # print(ecal_df)
+
     proba_df = pd.DataFrame({'Predicted No': prediction_proba[:, 0], 'Predicted Yes': prediction_proba[:, 1]})
 
     try:
@@ -159,6 +173,10 @@ def main():
     # st.subheader('Prediction Probability')
     # st.write(prediction_proba)
 
+    df2_xlsx = to_excel(df2)
+    st.download_button(label='Download Current Result',
+                                    data=df2_xlsx ,
+                                    file_name= 'Output.xlsx')
 
 if __name__ == '__main__':
     main()
