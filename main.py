@@ -172,9 +172,9 @@ def main():
     # print(proba_df)
     # st.subheader('Prediction Probability')
     # st.write(prediction_proba)
-
+    
     df2_xlsx = to_excel(df2)
-    st.download_button(label='Download Current Result',
+    st.download_button(label='Export Current Result',
                                     data=df2_xlsx ,
                                     file_name= 'Output.xlsx')
 
