@@ -66,14 +66,7 @@ def userInputFeatures():
             'SELL_AGENT_STATE': sell_agent_state, 'STATE': state, 'BMI': bmi
             }
 
-    # display_data = {'SELL_AGENT_AGE': sell_agent_age, 'PAYMNT_TERM': payment_term, 'ENTRY_AGE': entry_age,
-    #                 'BMI': bmi, 'OCCUPATION_CLASS': occupation_class, 'PAYMENT_METHOD': payment_method,
-    #                 'SELL_AGENT_STATE': sell_agent_state, 'STATE': state, 'SEX': sex, 'RSK_SUM_ASSURE': risk_sum_assured,
-    #                 'EXTRA_LOAD': extra_load, 'SMOKER': smoker, 'PAYMENT_MODE': payment_mode, 'RACE': race,
-    #                 'RISK_CODE': risk_code, 'SERVICE_AGENT_EDU_LEVEL': service_agent_edu_level,
-    #                 'SELL_AGENT_EDU_LEVEL': sell_agent_edu_level, 'MARITAL_STATUS': marital_status}
-
-    return pd.DataFrame(data, index=[0]) #, pd.DataFrame(display_data, index=[0])
+    return pd.DataFrame(data, index=[0])
 
 
 def to_excel(df):
@@ -88,11 +81,13 @@ def to_excel(df):
     processed_data = output.getvalue()
     return processed_data
 
+
 def reindexDataFrame(df):
     columns_name = ['SELL_AGENT_AGE', 'PAYMNT_TERM', 'ENTRY_AGE', 'BMI', 'OCCUPATION_CLASS', 'PAYMENT_METHOD',
-                    'SELL_AGENT_STATE', 'STATE', 'SEX', 'RSK_SUM_ASSURE', 'EXTRA_LOAD', 'SMOKER', 'PAYMENT_MODE', 'RACE',
-                    'RISK_CODE', 'SERVICE_AGENT_EDU_LEVEL', 'SELL_AGENT_EDU_LEVEL', 'MARITAL_STATUS']
+                    'SELL_AGENT_STATE', 'STATE', 'SEX', 'RSK_SUM_ASSURE', 'EXTRA_LOAD', 'SMOKER', 'PAYMENT_MODE',
+                    'RACE', 'RISK_CODE', 'SERVICE_AGENT_EDU_LEVEL', 'SELL_AGENT_EDU_LEVEL', 'MARITAL_STATUS']
     return df.reindex(columns=columns_name)
+
 
 def main():
     # Header
@@ -139,10 +134,7 @@ def main():
         #     st.write(ele)
         # st.write(df['SELL_AGENT_POSTCODE'])
 
-        # print(df['SELL_AGENT_POSTCODE'].dtypes)
         df.rename(columns={'SELL_AGENT_POSTCODE': 'SELL_AGENT_STATE'}, inplace=True)
-        # st.write(df.columns)
-        # st.write(df['SELL_AGENT_STATE'])
 
     else:
         df = userInputFeatures()
