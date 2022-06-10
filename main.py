@@ -14,49 +14,49 @@ col_list = ['RISK_CODE', 'SEX', 'OCCUPATION_CLASS', 'RACE', 'MARITAL_STATUS', 'E
 
 # Collects user input features into dataframe
 def userInputFeatures():
-    risk_code = st.sidebar.selectbox('Risk Code',
-                                     ('RTH1', 'RTI1', 'RTM1', 'RTN1', 'RTP1', 'RTP1', 'RTX1', 'UNHA', 'UNHC',
-                                      'UNHD', 'UNHE', 'UNHG', 'UNHH', 'UNHJ', 'UNHK', 'UNHL', 'UNHP'))
-
-    sex = st.sidebar.selectbox('Sex', ('Male', 'Female'))
-
-    occupation_class = st.sidebar.selectbox('Occupation Class', ('A', 'B', 'C', 'D'))
-
-    race = st.sidebar.selectbox('Race', ('BN', 'CH', 'IN', 'MA', 'OT'))
-
-    marital_status = st.sidebar.selectbox('Marital Status',
-                                          ('Single', 'Married', 'Widowed', 'Divorced', 'Not Disclosed', 'Unknown'))
-
-    entry_age = st.sidebar.slider('Entry Age', 0, 100)
-
-    smoker = st.sidebar.selectbox('Smoker', ('Smoker', 'Non-Smoker'))
-
-    risk_sum_assured = st.sidebar.selectbox('Risk Sum Assured', ('100', '150', '200', '300', '400', '600'))
-
-    payment_mode = st.sidebar.selectbox('Payment Mode', ('Monthly', 'Yearly', 'Half-yearly', 'Quarterly'))
+    sell_agent_age = st.sidebar.slider('Selling Agent Age', 0, 100)
 
     payment_term = st.sidebar.slider('Payment Term', 0, 100)
 
-    extra_load = st.sidebar.selectbox('Extra Load', ('Yes', 'No'))
+    entry_age = st.sidebar.slider('Entry Age', 0, 100)
 
-    service_agent_edu_level = st.sidebar.selectbox('Service Agent Educational Level', ('H', 'P', 'S', 'T', 'U'))
+    bmi = st.sidebar.number_input('BMI')
+
+    occupation_class = st.sidebar.selectbox('Occupation Class', ('A', 'B', 'C', 'D'))
 
     payment_method = st.sidebar.selectbox('Payment Method', ('B', 'C', 'D', 'F', 'R'))
-
-    sell_agent_edu_level = st.sidebar.selectbox('Selling Agent Educational Level', ('H', 'P', 'S', 'T', 'U'))
 
     sell_agent_state = st.sidebar.selectbox('Selling Agent State',
                                             ('KEDAH', 'KELANTAN', 'JOHOR', 'KUALA LUMPUR', 'LABUAN', 'MELAKA',
                                              'NEGERI SEMBILAN', 'PAHANG', 'PERLIS', 'PENANG', 'PERAK', 'SABAH',
                                              'SARAWAK', 'SELANGOR', 'TERENGGANU'))
 
-    sell_agent_age = st.sidebar.slider('Selling Agent Age', 0, 100)
-
     state = st.sidebar.selectbox('State',
                                  ('KEDAH', 'KELANTAN', 'JOHOR', 'KUALA LUMPUR', 'LABUAN', 'MELAKA', 'NEGERI SEMBILAN',
                                   'PAHANG', 'PERLIS', 'PENANG', 'PERAK', 'SABAH', 'SARAWAK', 'SELANGOR', 'TERENGGANU'))
 
-    bmi = st.sidebar.number_input('BMI')
+    sex = st.sidebar.selectbox('Sex', ('Male', 'Female'))
+
+    risk_sum_assured = st.sidebar.selectbox('Risk Sum Assured', ('100', '150', '200', '300', '400', '600'))
+
+    extra_load = st.sidebar.selectbox('Extra Load', ('Yes', 'No'))
+
+    smoker = st.sidebar.selectbox('Smoker', ('Smoker', 'Non-Smoker'))
+
+    payment_mode = st.sidebar.selectbox('Payment Mode', ('Monthly', 'Yearly', 'Half-yearly', 'Quarterly'))
+
+    race = st.sidebar.selectbox('Race', ('BN', 'CH', 'IN', 'MA', 'OT'))
+
+    risk_code = st.sidebar.selectbox('Risk Code',
+                                     ('RTH1', 'RTI1', 'RTM1', 'RTN1', 'RTP1', 'RTP1', 'RTX1', 'UNHA', 'UNHC',
+                                      'UNHD', 'UNHE', 'UNHG', 'UNHH', 'UNHJ', 'UNHK', 'UNHL', 'UNHP'))
+
+    service_agent_edu_level = st.sidebar.selectbox('Service Agent Educational Level', ('H', 'P', 'S', 'T', 'U'))
+
+    sell_agent_edu_level = st.sidebar.selectbox('Selling Agent Educational Level', ('H', 'P', 'S', 'T', 'U'))
+
+    marital_status = st.sidebar.selectbox('Marital Status',
+                                          ('Single', 'Married', 'Widowed', 'Divorced', 'Not Disclosed', 'Unknown'))
 
     data = {'RISK_CODE': risk_code, 'SEX': sex, 'OCCUPATION_CLASS': occupation_class, 'RACE': race,
             'MARITAL_STATUS': marital_status, 'ENTRY_AGE': entry_age, 'SMOKER': smoker, 'PAYMENT_MODE': payment_mode,
@@ -66,7 +66,14 @@ def userInputFeatures():
             'SELL_AGENT_STATE': sell_agent_state, 'STATE': state, 'BMI': bmi
             }
 
-    return pd.DataFrame(data, index=[0])
+    # display_data = {'SELL_AGENT_AGE': sell_agent_age, 'PAYMNT_TERM': payment_term, 'ENTRY_AGE': entry_age,
+    #                 'BMI': bmi, 'OCCUPATION_CLASS': occupation_class, 'PAYMENT_METHOD': payment_method,
+    #                 'SELL_AGENT_STATE': sell_agent_state, 'STATE': state, 'SEX': sex, 'RSK_SUM_ASSURE': risk_sum_assured,
+    #                 'EXTRA_LOAD': extra_load, 'SMOKER': smoker, 'PAYMENT_MODE': payment_mode, 'RACE': race,
+    #                 'RISK_CODE': risk_code, 'SERVICE_AGENT_EDU_LEVEL': service_agent_edu_level,
+    #                 'SELL_AGENT_EDU_LEVEL': sell_agent_edu_level, 'MARITAL_STATUS': marital_status}
+
+    return pd.DataFrame(data, index=[0]) #, pd.DataFrame(display_data, index=[0])
 
 
 def to_excel(df):
@@ -81,6 +88,11 @@ def to_excel(df):
     processed_data = output.getvalue()
     return processed_data
 
+def reindexDataFrame(df):
+    columns_name = ['SELL_AGENT_AGE', 'PAYMNT_TERM', 'ENTRY_AGE', 'BMI', 'OCCUPATION_CLASS', 'PAYMENT_METHOD',
+                    'SELL_AGENT_STATE', 'STATE', 'SEX', 'RSK_SUM_ASSURE', 'EXTRA_LOAD', 'SMOKER', 'PAYMENT_MODE', 'RACE',
+                    'RISK_CODE', 'SERVICE_AGENT_EDU_LEVEL', 'SELL_AGENT_EDU_LEVEL', 'MARITAL_STATUS']
+    return df.reindex(columns=columns_name)
 
 def main():
     # Header
@@ -137,12 +149,18 @@ def main():
 
     df = DataManipulation.objToCat(df)
 
+    # Reindex the sequence of the column
+    dis_df = reindexDataFrame(df)
+
     # Displays the user input features
-    st.subheader('User Input features')
-    st.write(df)
+    st.subheader('User Input Features')
+    st.write(dis_df)
+
     # # Reads in saved classification model
     load_clf = joblib.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
+
     # print(df.info())
+
     # Apply model to make predictions
     prediction = load_clf.predict(df)
     prediction_proba = load_clf.predict_proba(df)
@@ -160,7 +178,6 @@ def main():
         df2 = pd.concat([pol_df, ecal_df, proba_df], axis=1)
     except UnboundLocalError:
         df2 = pd.concat([ecal_df, proba_df], axis=1)
-    # df2['Result'] = df2.apply(lambda x: True if x['EarlyClaimAndLapsed'] == x['Prediction'] else False, axis=1)
     st.write(df2)
 
     try:
