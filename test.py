@@ -95,7 +95,7 @@ def main():
     # Header
     st.write('# Early Claim and Lapsed Prediction')
     # Header of sidebar
-    st.sidebar.header('User Input Features')
+    st.sidebar.header('User Input')
 
     target = pd.DataFrame()
     # Import file or user manually inputs
@@ -153,7 +153,7 @@ def main():
     dis_df = reindexDataFrame(df)
 
     # Displays the user input features
-    st.subheader('User Input Features')
+    st.subheader('User Input')
     st.write(dis_df)
 
     # # Reads in saved classification model
