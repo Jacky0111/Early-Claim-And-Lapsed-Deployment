@@ -93,7 +93,7 @@ def main():
     # Header
     st.write('# Early Claim and Lapsed Prediction')
     # Header of sidebar
-    st.sidebar.header('User Input Features')
+    st.sidebar.header('User Input')
 
     target = pd.DataFrame()
     # Import file or user manually inputs
@@ -145,7 +145,7 @@ def main():
     dis_df = reindexDataFrame(df)
 
     # Displays the user input features
-    st.subheader('User Input Features')
+    st.subheader('User Input')
     st.write(dis_df)
 
     # # Reads in saved classification model
@@ -170,6 +170,7 @@ def main():
         df2 = pd.concat([pol_df, ecal_df, proba_df], axis=1)
     except UnboundLocalError:
         df2 = pd.concat([ecal_df, proba_df], axis=1)
+    df2 = df2.sort_values(by=['Prediction','Predicted Yes'])
     st.write(df2)
 
     try:
