@@ -159,6 +159,8 @@ def main():
 
     # Prediction
     st.subheader('Prediction')
+    st.write('#### No : Not Early Claim and Lapsed')
+    st.write('#### Yes: Early Claim and Lapsed')
     ecal = np.array(['Not Early Claim and Lapsed', 'Early Claim and Lapsed'])
     # ecal = np.array(['N', 'Y'])
     ecal_df = pd.DataFrame(ecal[prediction], columns=['Prediction'])
