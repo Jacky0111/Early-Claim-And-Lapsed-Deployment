@@ -166,27 +166,27 @@ def main():
     ecal_df = pd.DataFrame(ecal[prediction], columns=['Prediction'])
     # print(ecal_df)
 
-    proba_df = pd.DataFrame({'Predicted No': prediction_proba[:, 0], 'Predicted Yes': prediction_proba[:, 1]})
+    proba_df = pd.DataFrame({'Predicted No (%)': prediction_proba[:, 0] * 100, 'Predicted Yes (%)': prediction_proba[:, 1] * 100})
 
     try:
         df2 = pd.concat([pol_df, ecal_df, proba_df], axis=1)
     except UnboundLocalError:
         df2 = pd.concat([ecal_df, proba_df], axis=1)
-    df2 = df2.sort_values(by=['Prediction', 'Predicted Yes'], ascending=False)
+    df2 = df2.sort_values(by=['Prediction', 'Predicted Yes (%)'], ascending=False)
     st.write(df2)
 
     try:
         df2['POLICY_NO'] = df2['POLICY_NO'].astype(str)
-        df2['Predicted No'] = df2['Predicted No'].round(decimals=4)
-        df2['Predicted Yes'] = df2['Predicted Yes'].round(decimals=4)
+        df2['Predicted No (%)'] = df2['Predicted No (%)'].round(decimals=2)
+        df2['Predicted Yes (%)'] = df2['Predicted Yes (%)'].round(decimals=2)
 
         df2_xlsx = to_excel(df2)
         st.download_button(label='Export Current Result',
                            data=df2_xlsx,
                            file_name=f'{Path(uploaded_file.name).stem}_result.xlsx')
     except KeyError:
-        df2['Predicted No'] = df2['Predicted No'].round(decimals=4)
-        df2['Predicted Yes'] = df2['Predicted Yes'].round(decimals=4)
+        df2['Predicted No (%)'] = df2['Predicted No (%)'].round(decimals=2)
+        df2['Predicted Yes (%)'] = df2['Predicted Yes (%)'].round(decimals=2)
         df2_xlsx = to_excel(df2)
         st.download_button(label='Export Current Result',
                            data=df2_xlsx,
