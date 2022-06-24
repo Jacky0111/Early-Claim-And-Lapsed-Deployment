@@ -11,9 +11,14 @@ col_list = ['RISK_CODE', 'SEX', 'OCCUPATION_CLASS', 'RACE', 'MARITAL_STATUS', 'E
             'RSK_SUM_ASSURE', 'PAYMNT_TERM', 'EXTRA_LOAD', 'SERVICE_AGENT_EDU_LEVEL', 'PAYMENT_METHOD',
             'SELL_AGENT_EDU_LEVEL', 'SELL_AGENT_AGE', 'SELL_AGENT_POSTCODE', 'STATE', 'BMI', 'POLICY_NO']
 
-
+def policyNo():
+    policyNum = st.sidebar.number_input('Policy Number', min_value=0,max_value=999999999999999, step=1)
+    st.write("Policy Number :" + str(policyNum))
+    
 # Collects user input features into dataframe
 def userInputFeatures():
+    
+
     sell_agent_age = st.sidebar.slider('Selling Agent Age', 0, 100)
 
     payment_term = st.sidebar.slider('Payment Term', 0, 100)
@@ -137,6 +142,7 @@ def main():
         df.rename(columns={'SELL_AGENT_POSTCODE': 'SELL_AGENT_STATE'}, inplace=True)
 
     else:
+        policyNo()
         df = userInputFeatures()
 
     df = DataManipulation.objToCat(df)
