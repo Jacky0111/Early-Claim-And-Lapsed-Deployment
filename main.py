@@ -178,7 +178,7 @@ def main():
         df2 = pd.concat([pol_df, ecal_df, proba_df], axis=1)
     except UnboundLocalError:
         df2 = pd.concat([ecal_df, proba_df], axis=1)
-    df2 = df2.sort_values(by=['Prediction', 'Predicted Yes (%)'], ascending=False)
+    df2 = df2.sort_values(by=['Predicted Yes (%)'], ascending=False)
     st.write(df2)
 
     try:
