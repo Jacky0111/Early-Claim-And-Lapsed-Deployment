@@ -135,10 +135,6 @@ def main():
         df.reset_index(inplace=True, drop=True)
         pol_df.reset_index(inplace=True, drop=True)
 
-        # for ele in df['SELL_AGENT_POSTCODE']:
-        #     st.write(ele)
-        # st.write(df['SELL_AGENT_POSTCODE'])
-
         df.rename(columns={'SELL_AGENT_POSTCODE': 'SELL_AGENT_STATE'}, inplace=True)
 
     else:
@@ -157,8 +153,6 @@ def main():
     # # Reads in saved classification model
     load_clf = joblib.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
 
-    # print(df.info())
-
     # Apply model to make predictions
     prediction = load_clf.predict(df)
     prediction_proba = load_clf.predict_proba(df)
@@ -168,9 +162,7 @@ def main():
     st.write('#### No : Not Early Claim and Lapsed')
     st.write('#### Yes: Early Claim and Lapsed')
     ecal = np.array(['Not Early Claim and Lapsed', 'Early Claim and Lapsed'])
-    # ecal = np.array(['N', 'Y'])
     ecal_df = pd.DataFrame(ecal[prediction], columns=['Prediction'])
-    # print(ecal_df)
 
     proba_df = pd.DataFrame({'Predicted No (%)': prediction_proba[:, 0] * 100, 'Predicted Yes (%)': prediction_proba[:, 1] * 100})
 
