@@ -86,8 +86,7 @@ def to_excel(df):
 def reindexDataFrame(df):
     columns_name = ['SELL_AGENT_AGE', 'PAYMNT_TERM', 'ENTRY_AGE', 'BMI', 'OCCUPATION_CLASS', 'PAYMENT_METHOD',
                     'SELL_AGENT_STATE', 'STATE', 'SEX', 'RSK_SUM_ASSURE', 'EXTRA_LOAD', 'SMOKER', 'PAYMENT_MODE',
-                    'RACE',
-                    'RISK_CODE', 'SERVICE_AGENT_EDU_LEVEL', 'SELL_AGENT_EDU_LEVEL', 'MARITAL_STATUS']
+                    'RACE', 'RISK_CODE', 'SERVICE_AGENT_EDU_LEVEL', 'SELL_AGENT_EDU_LEVEL', 'MARITAL_STATUS']
     return df.reindex(columns=columns_name)
 
 
@@ -104,8 +103,6 @@ def main():
     if uploaded_file is not None:
         if Path(uploaded_file.name).suffix == '.xlsx':
             df = pd.read_excel(uploaded_file)
-        #     uploaded_file.name = Path(uploaded_file.name).stem + '.csv'
-        #     os.rename(uploaded_file.name, os.path.splitext(uploaded_file.name)[0] + '.xlsx')
         else:
             df = pd.read_csv(uploaded_file)
 
