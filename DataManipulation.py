@@ -89,10 +89,7 @@ class DataManipulation:
             elif data[i] in range(93000, 98851):
                 data[i] = 'SARAWAK'
             else:
-                # st.write(data[i], i)
                 drop_list.append(data.index[i])
 
-            # st.write(data[i], i)
             i += 1
-        # st.write(drop_list)
         return data, drop_list
