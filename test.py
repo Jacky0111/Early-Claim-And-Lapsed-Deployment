@@ -49,7 +49,7 @@ def userInputFeatures():
     race = st.sidebar.selectbox('Race', ('BN', 'CH', 'IN', 'MA', 'OT'))
 
     risk_code = st.sidebar.selectbox('Risk Code',
-                                     ('RTH1', 'RTI1', 'RTM1', 'RTN1', 'RTP1', 'RTP1', 'RTX1', 'UNHA', 'UNHC',
+                                     ('RTH1', 'RTI1', 'RTM1', 'RTN1', 'RTP1', 'RTX1', 'UNHA', 'UNHC',
                                       'UNHD', 'UNHE', 'UNHG', 'UNHH', 'UNHJ', 'UNHK', 'UNHL', 'UNHP'))
 
     service_agent_edu_level = st.sidebar.selectbox('Service Agent Educational Level', ('H', 'P', 'S', 'T', 'U'))
