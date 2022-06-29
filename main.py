@@ -11,14 +11,14 @@ col_list = ['RISK_CODE', 'SEX', 'OCCUPATION_CLASS', 'RACE', 'MARITAL_STATUS', 'E
             'RSK_SUM_ASSURE', 'PAYMNT_TERM', 'EXTRA_LOAD', 'SERVICE_AGENT_EDU_LEVEL', 'PAYMENT_METHOD',
             'SELL_AGENT_EDU_LEVEL', 'SELL_AGENT_AGE', 'SELL_AGENT_POSTCODE', 'STATE', 'BMI', 'POLICY_NO']
 
+
 def policyNo():
-    policyNum = st.sidebar.number_input('Policy Number', min_value=0,max_value=999999999999999, step=1)
-    st.write("Policy Number :" + str(policyNum))
-    
+    policy_no = st.sidebar.number_input('Policy Number', min_value=0, max_value=999999999999999, step=1)
+    st.write("Policy Number :" + str(policy_no))
+
+
 # Collects user input features into dataframe
 def userInputFeatures():
-    
-
     sell_agent_age = st.sidebar.slider('Selling Agent Age', 0, 100)
 
     payment_term = st.sidebar.slider('Payment Term', 0, 100)
@@ -53,7 +53,7 @@ def userInputFeatures():
     race = st.sidebar.selectbox('Race', ('BN', 'CH', 'IN', 'MA', 'OT'))
 
     risk_code = st.sidebar.selectbox('Risk Code',
-                                     ('RTH1', 'RTI1', 'RTM1', 'RTN1', 'RTP1', 'RTP1', 'RTX1', 'UNHA', 'UNHC',
+                                     ('RTH1', 'RTI1', 'RTM1', 'RTN1', 'RTP1', 'RTX1', 'UNHA', 'UNHC',
                                       'UNHD', 'UNHE', 'UNHG', 'UNHH', 'UNHJ', 'UNHK', 'UNHL', 'UNHP'))
 
     service_agent_edu_level = st.sidebar.selectbox('Service Agent Educational Level', ('H', 'P', 'S', 'T', 'U'))
@@ -164,7 +164,8 @@ def main():
     ecal = np.array(['Not Early Claim and Lapsed', 'Early Claim and Lapsed'])
     ecal_df = pd.DataFrame(ecal[prediction], columns=['Prediction'])
 
-    proba_df = pd.DataFrame({'Predicted No (%)': prediction_proba[:, 0] * 100, 'Predicted Yes (%)': prediction_proba[:, 1] * 100})
+    proba_df = pd.DataFrame(
+        {'Predicted No (%)': prediction_proba[:, 0] * 100, 'Predicted Yes (%)': prediction_proba[:, 1] * 100})
 
     try:
         df2 = pd.concat([pol_df, ecal_df, proba_df], axis=1)
