@@ -53,8 +53,6 @@ class DataManipulation:
         while i < data.shape[0]:
             if data[i] in range(50000, 60001):
                 data[i] = 'KUALA LUMPUR'
-            # elif data[i] == '          ':
-            #     data[i] = ' '
             elif str(data[i]).startswith('62'):
                 data[i] = 'PUTRAJAYA'
             elif str(data[i]).startswith('87'):
