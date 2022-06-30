@@ -152,6 +152,7 @@ def main():
 
     # # Reads in saved classification model
     load_clf = joblib.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
+    
 
     # Apply model to make predictions
     prediction = load_clf.predict(df)
