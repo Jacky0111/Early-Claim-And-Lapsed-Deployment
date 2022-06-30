@@ -14,7 +14,7 @@ col_list = ['RISK_CODE', 'SEX', 'OCCUPATION_CLASS', 'RACE', 'MARITAL_STATUS', 'E
 
 def policyNo():
     policy_no = st.sidebar.number_input('Policy Number', min_value=0, max_value=999999999999999, step=1)
-    st.write("Policy Number :" + str(policy_no))
+    st.write("Policy Number : " + str(policy_no))
 
 
 # Collects user input features into dataframe
@@ -152,7 +152,6 @@ def main():
 
     # # Reads in saved classification model
     load_clf = joblib.load(open(r'\\10.188.78.123\CP_Shared\lgbm_model_auc.pkl', 'rb'))
-    
 
     # Apply model to make predictions
     prediction = load_clf.predict(df)
